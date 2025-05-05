@@ -8,7 +8,7 @@ export default function SignUpPage() {
           <div className="flex justify-center mb-4">
             <Image src={logo} alt="CampusClaims Logo" width={120} height={120} />
           </div>
-          <h2 className="text-center text-2xl font-bold text-[#2563eb] mb-6">
+          <h2 className="text-center text-2xl font-bold text-blue-800">
             Sign Up for CampusClaims
           </h2>
 
