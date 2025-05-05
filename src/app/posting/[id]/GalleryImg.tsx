@@ -7,17 +7,39 @@ export default function GalleryImg(props: {images: string[]}){
     const [imgIndex, setImgIndex] = useState<number>(0);
     const len = props.images.length;
     const image = props.images[imgIndex];
+
+    const btnStyle = `
+      w-10 h-10
+      text-white text-xl
+      bg-blue-600
+      rounded-full
+      hover:bg-blue-700
+      focus:ring-2 focus:ring-blue-400
+      transition duration-200 ease-in-out
+      flex items-center justify-center
+      shadow-sm
+    `;
+
+
     return (
-        <div>
-            <button onClick={() => setImgIndex((imgIndex - 1 + len) % len)}>{"\u2190"}</button>
-            <Image
-                key={imgIndex}
-                src={image}
-                alt={`Image ${imgIndex}`}
-                width={400}
-                height={300}
-            />
-        <button onClick={() => setImgIndex((imgIndex + 1) % len)}>{"\u2192"}</button>
+        <div className="flex items-center gap-4">
+            <button className={btnStyle}
+                    onClick={() => setImgIndex((imgIndex - 1 + len) % len)}>{"\u2190"}</button>
+            <div className="flex flex-col items-center">
+                <Image
+                    key={imgIndex}
+                    src={image}
+                    alt={`Image ${imgIndex}`}
+                    width={400}
+                    height={300}
+                    className="rounded-md"
+                />
+                <p className="text-sm text-gray-500 mt-2">
+                    {imgIndex + 1} / {len}
+                </p>
+            </div>
+        <button className={btnStyle}
+                onClick={() => setImgIndex((imgIndex + 1) % len)}>{"\u2192"}</button>
 
     </div>);
 }
