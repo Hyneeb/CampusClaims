@@ -5,7 +5,6 @@ import Image from 'next/image';
 import ChatButton from "@/app/posting/[id]/ChatButton";
 import GalleryImg from "@/app/posting/[id]/GalleryImg";
 import logo from '/public/logo.png';
-import user from '/public/user.png';
 
 function Posting(props: { id: string; preview?: boolean }): JSX.Element {
     const { id, preview = false } = props;
@@ -55,19 +54,10 @@ function Posting(props: { id: string; preview?: boolean }): JSX.Element {
                         <h1 className="text-lg font-semibold text-blue-600">{post.title}</h1>
                     </div>
 
-                    <div className="flex justify-end items-center pb-4 pr-4">
-                        <div className="relative group inline-block">
-                            <Image
-                                src={user}
-                                alt="User symbol"
-                                width={40}
-                                height={40}
-                                className="rounded-full cursor-pointer"
-                            />
-                            <div className="absolute right-0 top-full mt-1 w-max bg-white text-xs text-gray-500 px-2 py-1 rounded shadow-md opacity-0 group-hover:opacity-100 transition z-10">
-                                Icon by kmg design
-                            </div>
-                        </div>
+                    <div className="flex justify-end items-center pr-4">
+                      <span className="inline-block px-3 py-1 text-xs font-medium bg-blue-50 text-blue-700 rounded-full">
+                        Posted&nbsp;by&nbsp;{post.userId}
+                      </span>
                     </div>
                 </div>
             </div>
@@ -108,7 +98,7 @@ function fetchPost(id: string): {
     return {
         id: id,
         userId: "Jakey",
-        found: false,
+        found: parseInt(id) % 2 === 0, // fake condition rn even => found object, odd => lost object
         title: "Lost my Lucario at location",
         location: "Sample Location",
         date: new Date(),
