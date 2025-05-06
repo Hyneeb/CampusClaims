@@ -77,7 +77,7 @@ function Posting(props: {id: string, preview?: boolean}): JSX.Element {
 function fetchPost(id: string):{id:string, title: string, location: string, date: Date, images: string[], description: string} {
     return {
         id: id,
-        title: "Sample Title",
+        title: "Lost ___ at location",
         location: "Sample Location",
         date: new Date(),
         images: ["https://upload.wikimedia.org/wikipedia/en/9/95/Pok%C3%A9mon_Lucario_art.png",

@@ -1,5 +1,6 @@
 import { JSX } from "react";
 import Filter from "@/components/Filter";
+import { FaSearch } from "react-icons/fa";
 
 export default function Explore(): JSX.Element {
     return (
@@ -15,16 +16,20 @@ export default function Explore(): JSX.Element {
                 <Filter />
 
                 {/* Search bar and button */}
-                <div className="flex w-full gap-2">
+                <div className="relative w-full max-w-md">
                     <input
                         type="text"
-                        placeholder="Search for a lost item"
-                        className="flex-grow px-4 py-2 border border-gray-300 rounded-md"
+                        placeholder="Search..."
+                        className="w-full px-5 pr-12 py-3 text-base border border-gray-300 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-800 transition"
                     />
-                    <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
-                        Search
+                    <button
+                        type="button"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-white bg-blue-600 rounded-full hover:bg-blue-700 transition"
+                    >
+                        <FaSearch className="text-sm" />
                     </button>
                 </div>
+
             </div>
         </div>
     );

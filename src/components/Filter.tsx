@@ -4,8 +4,8 @@ import {JSX, useState} from 'react';
 
 export default function Filter():JSX.Element {
     const [filter, setFilter] = useState<string>('lost');
-    const selectedStyle = "bg-blue-600 text-white";
-    const unselectedStyle = "bg-gray-200 text-gray-600";
+    const selectedStyle = "bg-blue-600 text-white shadow-md transform hover:scale-105 transition duration-200 ease-in-out";
+    const unselectedStyle = "bg-gray-200 text-gray-600 shadow-md transform hover:scale-105 transition duration-200 ease-in-out";
     return (
         <div className="flex gap-2">
             <button
