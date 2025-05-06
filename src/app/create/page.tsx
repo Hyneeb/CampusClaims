@@ -1,51 +1,54 @@
 'use client';
 /* eslint-disable @typescript-eslint/no-unused-vars */
-
 import { useState } from 'react';
 import Image from 'next/image';
+import Filter from '@/components/Filter';
 
 export default function CreatePostPage() {
-    const [postType, setPostType] = useState<'lost' | 'found'>('lost');
     const [images, setImages] = useState<File[]>([]);
     const [previews, setPreviews] = useState<string[]>([]);
     const [campus, setCampus] = useState('TMU');
+    const [category, setCategory] = useState('');
+    const [customItem, setCustomItem] = useState('');
+    const [location, setLocation] = useState('');
+
+    const campusLocations = {
+        TMU: ['Kerr Hall', 'SLC', 'Library', 'Engineering Building'],
+        UTM: ['Davis Building', 'CCT', 'Library'],
+    };
+
+    const categories = [
+        'Phone',
+        'Wallet',
+        'Keys',
+        'Laptop',
+        'Backpack',
+        'Water Bottle',
+        'Jewelry',
+        'Clothing',
+        'Other',
+    ];
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || []).slice(0, 3);
         setImages(files);
-        const previews = files.map(file => URL.createObjectURL(file));
-        setPreviews(previews);
+        setPreviews(files.map(file => URL.createObjectURL(file)));
     };
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
             <div className="bg-white rounded-lg shadow-md p-6 w-full max-w-xl">
-                <h1 className="text-2xl font-semibold mb-4 text-center text-blue-800">
-                    Create a {postType === 'lost' ? 'Lost' : 'Found'} Post
+                <h1 className="text-2xl font-semibold mb-4 text-center text-blue-600">
+                    Create a new Post
                 </h1>
 
-                {/* Post type toggle */}
+                {/* Filter buttons */}
                 <div className="flex justify-center mb-4">
-                    <button
-                        className={`px-4 py-2 rounded-l-md border ${
-                            postType === 'lost' ? 'bg-blue-800 text-white' : 'bg-gray-200 text-gray-800'
-                        }`}
-                        onClick={() => setPostType('lost')}
-                    >
-                        Lost
-                    </button>
-                    <button
-                        className={`px-4 py-2 rounded-r-md border ${
-                            postType === 'found' ? 'bg-blue-800 text-white' : 'bg-gray-200 text-gray-800'
-                        }`}
-                        onClick={() => setPostType('found')}
-                    >
-                        Found
-                    </button>
+                    <Filter />
                 </div>
 
                 <form className="space-y-4">
-                    {/* Campus selection */}
+                    {/* Campus */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Campus</label>
                         <select
@@ -58,17 +61,64 @@ export default function CreatePostPage() {
                         </select>
                     </div>
 
-                    {/* Title */}
+                    {/* Category */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Title</label>
-                        <input
-                            type="text"
+                        <label className="block text-sm font-medium text-gray-700">Item Category</label>
+                        <select
                             className="w-full border border-gray-300 rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            placeholder="e.g. Lost backpack near library"
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value)}
+                        >
+                            <option value="">Select an item...</option>
+                            {categories.map((item) => (
+                                <option key={item} value={item}>
+                                    {item}
+                                </option>
+                            ))}
+                        </select>
+                        {category === 'Other' && (
+                            <>
+                                <input
+                                    type="text"
+                                    value={customItem}
+                                    onChange={(e) => setCustomItem(e.target.value)}
+                                    className="w-full mt-2 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    placeholder="Please specify item..."
+                                />
+                                <p className="text-xs text-gray-500 mt-1">
+                                    Custom items may not appear in automated matching results.
+                                </p>
+                            </>
+                        )}
+                    </div>
+
+                    {/* Location dropdown */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Location</label>
+                        <select
+                            className="w-full border border-gray-300 rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            value={location}
+                            onChange={(e) => setLocation(e.target.value)}
+                        >
+                            <option value="">Select location...</option>
+                            {campusLocations[campus as 'TMU' | 'UTM'].map((loc) => (
+                                <option key={loc} value={loc}>
+                                    {loc}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* Last Seen Date */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Last Seen Date</label>
+                        <input
+                            type="date"
+                            className="w-full border border-gray-300 rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
                         />
                     </div>
 
-                    {/* Image upload */}
+                    {/* Image Upload */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Upload Images (max 3)</label>
                         <label
@@ -100,25 +150,6 @@ export default function CreatePostPage() {
                         </div>
                     </div>
 
-                    {/* Location */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Location</label>
-                        <input
-                            type="text"
-                            className="w-full border border-gray-300 rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            placeholder="e.g. Kerr Hall West"
-                        />
-                    </div>
-
-                    {/* Last seen date */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Last Seen Date</label>
-                        <input
-                            type="date"
-                            className="w-full border border-gray-300 rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        />
-                    </div>
-
                     {/* Description */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Description</label>
@@ -129,11 +160,11 @@ export default function CreatePostPage() {
                         />
                     </div>
 
-                    {/* Submit button */}
+                    {/* Submit */}
                     <div className="text-center">
                         <button
                             type="submit"
-                            className="bg-blue-800 text-white px-6 py-2 rounded-md hover:bg-blue-900 transition"
+                            className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-900 transition"
                         >
                             Submit Post
                         </button>
