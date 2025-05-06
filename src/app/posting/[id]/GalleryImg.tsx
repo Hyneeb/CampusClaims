@@ -23,23 +23,25 @@ export default function GalleryImg(props: {images: string[], preview: boolean}) 
 
     return (
         <div className="flex items-center gap-4">
-            <button className={btnStyle}
-                    onClick={() => setImgIndex((imgIndex - 1 + len) % len)}>{"\u2190"}</button>
+            {!props.preview && (<button className={btnStyle}
+                    onClick={() => setImgIndex((imgIndex - 1 + len) % len)}>{"\u2190"}</button>)
+            }
             <div className="flex flex-col items-center">
                 <Image
                     key={imgIndex}
                     src={image}
                     alt={`Image ${imgIndex}`}
-                    width={!props.preview ? 300: 80}
-                    height={!props.preview? 250: 80}
+                    width={!props.preview ? 300: 120}
+                    height={!props.preview? 250: 100}
                     className="rounded-md object-contain max-w-full h-auto"
                 />
-                <p className="text-sm text-gray-500 mt-2">
+                {!props.preview && (<p className="text-sm text-gray-500 mt-2">
                     {imgIndex + 1} / {len}
-                </p>
+                </p>)}
             </div>
-        <button className={btnStyle}
+            {!props.preview && (<button className={btnStyle}
                 onClick={() => setImgIndex((imgIndex + 1) % len)}>{"\u2192"}</button>
+            )}
 
     </div>);
 }

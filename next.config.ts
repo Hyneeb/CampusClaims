@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
                 hostname: 'upload.wikimedia.org',
                 pathname: '/**', // allow all paths
             },
+            {
+                protocol: 'https',
+                hostname: 'static.wikia.nocookie.net',
+                pathname: '/**',      // allow any path under that host
+            }
         ],
     },
 };

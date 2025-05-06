@@ -29,9 +29,13 @@ function Posting(props: { id: string; preview?: boolean }): JSX.Element {
                 {/* Footer */}
                 <div className="w-full flex justify-center">
                     <div className="space-y-2">
+                        <p className="text-xs text-gray-600 line-clamp-4">
+                            {post.description}
+                        </p>
                         <p className="text-xs text-gray-600">
                             Last seen on <span className="font-semibold">{post.date.toDateString()}</span>
                         </p>
+
                         <h2>Posted by {post.userId} </h2>
                     </div>
                 </div>
@@ -102,7 +106,7 @@ function fetchPost(id: string): {
         title: "Lost my Lucario at location",
         location: "Sample Location",
         date: new Date(),
-        images: [
+        images: [ "https://static.wikia.nocookie.net/p__/images/f/f0/Maylene_Lucario.png/revision/latest?cb=20180919005303&path-prefix=protagonist",
             "https://upload.wikimedia.org/wikipedia/en/9/95/Pok%C3%A9mon_Lucario_art.png",
             "https://upload.wikimedia.org/wikipedia/en/4/43/Pok%C3%A9mon_Mewtwo_art.png",
         ],
