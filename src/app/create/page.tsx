@@ -1,5 +1,4 @@
 'use client';
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from 'react';
 import Image from 'next/image';
 import Filter from '@/components/Filter';
@@ -101,22 +100,31 @@ export default function CreatePostPage() {
 
 
     const categories = [
-        'Headphones',
-        'Phone',
-        'Wallet',
-        'Keys',
-        'Laptop',
-        'Backpack',
-        'Water Bottle',
-        'Jewelry',
-        'Clothing',
-        'Other',
+        'Phone', 'Wallet', 'Keys', 'Laptop', 'Backpack', 'Water Bottle',
+        'Jewelry', 'Clothing', 'Other'
     ];
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = Array.from(e.target.files || []).slice(0, 3);
-        setImages(files);
-        setPreviews(files.map(file => URL.createObjectURL(file)));
+        const selectedFiles = Array.from(e.target.files || []);
+        const totalFiles = images.length + selectedFiles.length;
+
+        if (totalFiles > 3) {
+            const allowed = selectedFiles.slice(0, 3 - images.length);
+            setImages(prev => [...prev, ...allowed]);
+            setPreviews(prev => [...prev, ...allowed.map(file => URL.createObjectURL(file))]);
+        } else {
+            setImages(prev => [...prev, ...selectedFiles]);
+            setPreviews(prev => [...prev, ...selectedFiles.map(file => URL.createObjectURL(file))]);
+        }
+    };
+
+    const removeImage = (index: number) => {
+        const newImages = [...images];
+        const newPreviews = [...previews];
+        newImages.splice(index, 1);
+        newPreviews.splice(index, 1);
+        setImages(newImages);
+        setPreviews(newPreviews);
     };
 
     return (
@@ -126,13 +134,12 @@ export default function CreatePostPage() {
                     Create a new Post
                 </h1>
 
-                {/* Filter buttons */}
                 <div className="flex justify-center mb-4">
                     <Filter />
                 </div>
 
                 <form className="space-y-4">
-                    {/* Campus */}
+                    {/* Campus Selection */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Campus</label>
                         <select
@@ -155,9 +162,7 @@ export default function CreatePostPage() {
                         >
                             <option value="">Select an item...</option>
                             {categories.map((item) => (
-                                <option key={item} value={item}>
-                                    {item}
-                                </option>
+                                <option key={item} value={item}>{item}</option>
                             ))}
                         </select>
                         {category === 'Other' && (
@@ -176,7 +181,7 @@ export default function CreatePostPage() {
                         )}
                     </div>
 
-                    {/* Location dropdown */}
+                    {/* Location */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Location</label>
                         <select
@@ -185,10 +190,8 @@ export default function CreatePostPage() {
                             onChange={(e) => setLocation(e.target.value)}
                         >
                             <option value="">Select location...</option>
-                            {campusLocations[campus as 'TMU' | 'UTM'].map((loc) => (
-                                <option key={loc} value={loc}>
-                                    {loc}
-                                </option>
+                            {campusLocations[campus as 'TMU' | 'UTM'].map(loc => (
+                                <option key={loc} value={loc}>{loc}</option>
                             ))}
                         </select>
                     </div>
@@ -207,7 +210,7 @@ export default function CreatePostPage() {
                         <label className="block text-sm font-medium text-gray-700 mb-1">Upload Images (max 3)</label>
                         <label
                             htmlFor="image-upload"
-                            className="inline-block cursor-pointer border border-blue-800 text-blue-800 px-4 py-2 rounded-md hover:bg-blue-50 transition"
+                            className={`inline-block cursor-pointer border border-blue-800 text-blue-800 px-4 py-2 rounded-md hover:bg-blue-50 transition ${images.length >= 3 ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
                             Choose Files
                         </label>
@@ -218,18 +221,30 @@ export default function CreatePostPage() {
                             multiple
                             className="hidden"
                             onChange={handleImageChange}
+                            disabled={images.length >= 3}
                         />
+                        {images.length >= 3 && (
+                            <p className="text-xs text-red-500 mt-1">Maximum of 3 images allowed.</p>
+                        )}
                         <div className="mt-2 grid grid-cols-3 gap-2">
                             {previews.map((src, index) => (
-                                <Image
-                                    key={index}
-                                    src={src}
-                                    alt={`Preview ${index + 1}`}
-                                    width={100}
-                                    height={100}
-                                    unoptimized
-                                    className="object-cover rounded-md border"
-                                />
+                                <div key={index} className="relative">
+                                    <Image
+                                        src={src}
+                                        alt={`Preview ${index + 1}`}
+                                        width={100}
+                                        height={100}
+                                        unoptimized
+                                        className="object-cover rounded-md border"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => removeImage(index)}
+                                        className="absolute -top-2 -right-2 bg-white text-red-600 border border-red-300 rounded-full w-5 h-5 text-xs flex items-center justify-center"
+                                    >
+                                        ×
+                                    </button>
+                                </div>
                             ))}
                         </div>
                     </div>
