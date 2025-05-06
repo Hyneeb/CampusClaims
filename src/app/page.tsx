@@ -23,6 +23,13 @@ export default function Home() {
         >
           Go to Sample Post
         </Link>
+
+          <Link
+              href="/explore"
+              className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition"
+          >
+              Explore!
+          </Link>
       </div>
   );
 }
