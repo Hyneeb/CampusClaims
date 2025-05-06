@@ -45,11 +45,11 @@ function Posting(props: { id: string; preview?: boolean }): JSX.Element {
 
     // 🔹 Full page layout
     return (
-        <div className="max-w-5xl mx-auto p-6 bg-white rounded-lg shadow-md space-y-8">
+        <div className="bg-white border border-gray-200 p-6 rounded-xl max-w-5xl mx-auto space-y-8">
             {/* Header */}
-            <div className="border-2 rounded-2xl border-gray-200 pb-4 mb-6 bg-gray-100">
+            <div className="border rounded-lg border-gray-200 px-4 py-3 bg-gray-50">
                 <div className="grid grid-cols-3 items-center">
-                    <div className="flex items-center gap-2 justify-start pl-4">
+                    <div className="flex items-center gap-2 justify-start">
                         <Image src={logo} alt="Location symbol" width={40} height={40} />
                         <p className="text-sm text-gray-700 font-medium">{post.location}</p>
                     </div>
@@ -58,16 +58,16 @@ function Posting(props: { id: string; preview?: boolean }): JSX.Element {
                         <h1 className="text-lg font-semibold text-blue-600">{post.title}</h1>
                     </div>
 
-                    <div className="flex justify-end items-center pr-4">
-                      <span className="inline-block px-3 py-1 text-xs font-medium bg-blue-50 text-blue-700 rounded-full">
-                        Posted&nbsp;by&nbsp;{post.userId}
-                      </span>
+                    <div className="flex justify-end items-center">
+                        <span className="inline-block px-3 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-full">
+                            Posted by {post.userId}
+                        </span>
                     </div>
                 </div>
             </div>
 
             {/* Body */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start p-6 rounded-2xl bg-white shadow-md">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
                 {/* Image */}
                 <GalleryImg images={post.images} preview={preview} />
 
@@ -77,9 +77,7 @@ function Posting(props: { id: string; preview?: boolean }): JSX.Element {
                         Last seen on <span className="font-semibold">{post.date.toDateString()}</span>
                     </p>
                     {!preview && (
-                        <p className="text-gray-800 leading-relaxed whitespace-pre-line">
-                            {post.description}
-                        </p>
+                        <p className="text-gray-800 leading-relaxed whitespace-pre-line">{post.description}</p>
                     )}
                     <ChatButton />
                 </div>
@@ -87,7 +85,6 @@ function Posting(props: { id: string; preview?: boolean }): JSX.Element {
         </div>
     );
 }
-
 
 function fetchPost(id: string): {
     id: string;
@@ -102,7 +99,7 @@ function fetchPost(id: string): {
     return {
         id: id,
         userId: "Jakey",
-        found: parseInt(id) % 2 === 0, // fake condition rn even => found object, odd => lost object
+        found: parseInt(id) % 2 === 0,
         title: "Lost my Lucario at location",
         location: "Sample Location",
         date: new Date(),
