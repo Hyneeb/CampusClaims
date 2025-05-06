@@ -3,7 +3,7 @@ import Image from "next/image";
 import {useState} from "react";
 
 
-export default function GalleryImg(props: {images: string[]}){
+export default function GalleryImg(props: {images: string[], preview: boolean}) {
     const [imgIndex, setImgIndex] = useState<number>(0);
     const len = props.images.length;
     const image = props.images[imgIndex];
@@ -30,9 +30,9 @@ export default function GalleryImg(props: {images: string[]}){
                     key={imgIndex}
                     src={image}
                     alt={`Image ${imgIndex}`}
-                    width={400}
-                    height={300}
-                    className="rounded-md"
+                    width={!props.preview ? 300: 80}
+                    height={!props.preview? 250: 80}
+                    className="rounded-md object-contain max-w-full h-auto"
                 />
                 <p className="text-sm text-gray-500 mt-2">
                     {imgIndex + 1} / {len}
