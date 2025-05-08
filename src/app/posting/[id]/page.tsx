@@ -36,7 +36,7 @@ function Posting({ id: propId, preview = false }: { id?: string; preview?: boole
                 setPost(data);
             }
         });
-    })
+    }, [id, router])
 
 
     if (preview && post) {
