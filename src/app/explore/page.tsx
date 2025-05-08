@@ -48,7 +48,7 @@ export default function Explore(): JSX.Element {
                 <div className="mx-auto max-w-7xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 px-4">
                     {posts.map((id, index) => (
                         <Link key={index} href={"/posting/" + id + "/"}>
-                        <Posting key={index} id={id}/>
+                        <Posting key={index} id={id} preview={true}/>
                         </Link>
                     ))}
                 </div>
