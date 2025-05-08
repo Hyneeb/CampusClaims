@@ -10,6 +10,12 @@ export default function CreatePostPage() {
     const [category, setCategory] = useState('');
     const [customItem, setCustomItem] = useState('');
     const [location, setLocation] = useState('');
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [filter, setFilter] = useState("lost");
+
+    const handleFilterChange = (value: string) => {
+        setFilter(value); // update parent state
+    };
 
     const campusLocations = {
         TMU: [
@@ -135,7 +141,8 @@ export default function CreatePostPage() {
                 </h1>
 
                 <div className="flex justify-center mb-4">
-                    <Filter />
+                    <Filter onChange={handleFilterChange}/>
+
                 </div>
 
                 <form className="space-y-4">

@@ -1,4 +1,5 @@
-import { JSX } from "react";
+'use client';
+import {JSX, useState} from "react";
 import Filter from "@/components/Filter";
 import { FaSearch } from "react-icons/fa";
 import Posting from "@/app/posting/[id]/page";
@@ -6,6 +7,12 @@ import Link from "next/link";
 
 export default function Explore(): JSX.Element {
     const posts = fetchPosts();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [filter, setFilter] = useState<string>("lost");
+
+    const handleFilterChange = (value: string) => {
+        setFilter(value); // update parent state
+    };
 
     return (
         <div className="min-h-screen p-8 flex flex-col items-center gap-8">
@@ -16,7 +23,7 @@ export default function Explore(): JSX.Element {
 
             {/* Search + Filter section – stays narrow */}
             <section className="w-full max-w-md flex flex-col items-center gap-4">
-                <Filter />
+                <Filter onChange={handleFilterChange} />
 
                 {/* Search bar */}
                 <div className="relative w-full">
