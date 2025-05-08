@@ -135,7 +135,7 @@ export default function SignUpPage() {
 
             <button
                 type="submit"
-                className="w-full bg-[#2563eb] text-white py-2 px-4 rounded hover:bg-blue-600"
+                className="w-full bg-[#2563eb] text-white py-2 px-4 rounded hover:bg-blue-600 cursor-pointer"
             >
               Sign Up
             </button>
