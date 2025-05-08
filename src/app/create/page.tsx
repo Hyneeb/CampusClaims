@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Filter from '@/components/Filter';
+import {useRouter} from "next/navigation";
 
 export default function CreatePostPage() {
     const [images, setImages] = useState<File[]>([]);
@@ -10,8 +11,10 @@ export default function CreatePostPage() {
     const [category, setCategory] = useState('');
     const [customItem, setCustomItem] = useState('');
     const [location, setLocation] = useState('');
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [desc, setDesc] = useState('');
     const [filter, setFilter] = useState("lost");
+    const [date, setDate] = useState('');
+    const router = useRouter();
 
     const handleFilterChange = (value: string) => {
         setFilter(value); // update parent state
@@ -133,6 +136,36 @@ export default function CreatePostPage() {
         setPreviews(newPreviews);
     };
 
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const fd = new FormData();
+        fd.append('post_type', filter);
+        fd.append('campus', campus);
+        fd.append('title', "Lost " + (category || customItem));
+        fd.append('location', location);
+        fd.append('description', desc);
+        images.forEach((image) => {
+            fd.append('images', image);
+        });
+        fd.append('event_date', date);
+
+        const data = await fetch(`/api/create_post`, {
+            method: 'POST',
+            body: fd
+        });
+        const res = await data.json();
+        if (res.success) {
+            alert('Post created successfully!');
+            router.push('/explore'); // Redirect to home page
+
+        } else {
+            alert('Error creating post: ' + res.error);
+
+        }
+
+
+    };
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
             <div className="bg-white rounded-lg shadow-md p-6 w-full max-w-xl">
@@ -145,7 +178,7 @@ export default function CreatePostPage() {
 
                 </div>
 
-                <form className="space-y-4">
+                <form className="space-y-4" onSubmit={handleSubmit}>
                     {/* Campus Selection */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Campus</label>
@@ -209,6 +242,7 @@ export default function CreatePostPage() {
                         <input
                             type="date"
                             className="w-full border border-gray-300 rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            onChange={(e) => setDate(e.target.value)}
                         />
                     </div>
 
@@ -263,6 +297,7 @@ export default function CreatePostPage() {
                             rows={4}
                             className="w-full border border-gray-300 rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
                             placeholder="Provide any identifying features or details..."
+                            onChange={(e) => {setDesc(e.target.value)}}
                         />
                     </div>
 
@@ -271,6 +306,7 @@ export default function CreatePostPage() {
                         <button
                             type="submit"
                             className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-900 transition"
+
                         >
                             Submit Post
                         </button>

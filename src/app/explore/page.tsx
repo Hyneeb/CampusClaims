@@ -46,9 +46,9 @@ export default function Explore(): JSX.Element {
             {/* Grid section – allowed to span the whole page */}
             <section className="w-full py-8">
                 <div className="mx-auto max-w-7xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 px-4">
-                    {posts.map((id) => (
-                        <Link key={id} href={"/posting/" + id + "/"}>
-                        <Posting key={id} id={id} preview />
+                    {posts.map((id, index) => (
+                        <Link key={index} href={"/posting/" + id + "/"}>
+                        <Posting key={index} id={id}/>
                         </Link>
                     ))}
                 </div>
@@ -58,5 +58,6 @@ export default function Explore(): JSX.Element {
 }
 
 function fetchPosts():string[] {
-    return [1, 2, 3, 4, 5, 6, 7].map((i) => `${i}`);
+    return ["c3898659-48d5-4fcb-bc63-783aff8b6e18", "c3898659-48d5-4fcb-bc63-783aff8b6e18"
+        , "c3898659-48d5-4fcb-bc63-783aff8b6e18", "c3898659-48d5-4fcb-bc63-783aff8b6e18"];
 }

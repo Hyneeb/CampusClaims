@@ -1,10 +1,25 @@
 'use client';
 import Image from "next/image";
 import {useState} from "react";
+import pic from '@/../public/vercel.svg';
 
 
-export default function GalleryImg(props: {images: string[], preview: boolean}) {
+export default function GalleryImg(props: {images: string[] | null, preview: boolean}) {
     const [imgIndex, setImgIndex] = useState<number>(0);
+    if (!props.images || props.images.length === 0) {
+        return (
+            <div className="flex flex-col items-center">
+                <Image
+                    key={imgIndex}
+                    src={pic}
+                    alt={`Image ${imgIndex}`}
+                    width={!props.preview ? 300: 120}
+                    height={!props.preview? 250: 100}
+                    className="rounded-md object-contain max-w-full h-auto"
+                />
+            </div>
+        )
+    }
     const len = props.images.length;
     const image = props.images[imgIndex];
 

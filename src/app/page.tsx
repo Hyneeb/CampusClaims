@@ -18,7 +18,7 @@ export default function Home() {
         </Link>
 
         <Link
-            href="/posting/abc"
+            href="/posting/c3898659-48d5-4fcb-bc63-783aff8b6e18"
             className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition"
         >
           Go to Sample Post

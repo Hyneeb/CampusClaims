@@ -1,19 +1,23 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
     images: {
         remotePatterns: [
             {
                 protocol: 'https',
                 hostname: 'upload.wikimedia.org',
-                pathname: '/**', // allow all paths
+                pathname: '/**',
             },
             {
                 protocol: 'https',
                 hostname: 'static.wikia.nocookie.net',
-                pathname: '/**',      // allow any path under that host
-            }
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'qavhjoqptirrbopzjwud.supabase.co', // ✅ your Supabase storage
+                pathname: '/storage/v1/object/public/images/**',
+            },
         ],
     },
 };
