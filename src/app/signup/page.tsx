@@ -42,11 +42,12 @@ export default function SignUpPage() {
       return;
     }
 
-    if (data) {
-      const new_data = await supabase.from("users")
-          .update({username: username})
-          .eq("id", data.user?.id)
-          .select();
+    if (data && data.user) {
+      const new_data = await supabase.from("users").insert({
+        id: data.user.id,
+        email,
+        username
+      }).select();
       if (new_data.error) {
         console.error("Error updating username:", new_data.error.message);
         alert("Uh oh, seems like there was a problem signing you up. Please try again.");
