@@ -1,10 +1,21 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { createClient } from '@/utils/supabase/client';
 
 export default function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        const checkUser = async () => {
+            const supabase = createClient();
+            const { data: { user } } = await supabase.auth.getUser();
+            setIsLoggedIn(!!user);
+        };
+        checkUser();
+    }, []);
 
     return (
         <header className="bg-blue-800 text-white shadow-md">
@@ -31,8 +42,19 @@ export default function Navbar() {
                 <nav className="hidden sm:flex gap-6 text-sm">
                     <Link href="/explore" className="hover:underline">Explore</Link>
                     <Link href="/create" className="hover:underline">Post</Link>
-                    <Link href="/login" className="hover:underline">Login</Link>
-                    <Link href="/signup" className="hover:underline">Signup</Link>
+                    {isLoggedIn ? (
+                        <>
+                            <Link href="/account" className="hover:underline">Account</Link>
+                            <form action="/auth/signout" method="post">
+                                <button type="submit" className="hover:underline">Logout</button>
+                            </form>
+                        </>
+                    ) : (
+                        <>
+                            <Link href="/login" className="hover:underline">Login</Link>
+                            <Link href="/signup" className="hover:underline">Signup</Link>
+                        </>
+                    )}
                 </nav>
             </div>
 
@@ -41,10 +63,22 @@ export default function Navbar() {
                 <div className="sm:hidden px-4 pb-3 bg-blue-700">
                     <Link href="/explore" className="block py-1">Explore</Link>
                     <Link href="/create" className="block py-1">Post</Link>
-                    <Link href="/login" className="block py-1">Login</Link>
-                    <Link href="/signup" className="block py-1">Signup</Link>
+                    {isLoggedIn ? (
+                        <>
+                            <Link href="/account" className="block py-1">Account</Link>
+                            <form action="/auth/signout" method="post">
+                                <button type="submit" className="block py-1 text-left">Logout</button>
+                            </form>
+                        </>
+                    ) : (
+                        <>
+                            <Link href="/login" className="block py-1">Login</Link>
+                            <Link href="/signup" className="block py-1">Signup</Link>
+                        </>
+                    )}
                 </div>
             )}
         </header>
     );
 }
+
