@@ -141,7 +141,7 @@ export default function CreatePostPage() {
         const fd = new FormData();
         fd.append('post_type', filter);
         fd.append('campus', campus);
-        fd.append('title', "Lost " + (category || customItem));
+        fd.append('title', (category || customItem));
         fd.append('location', location);
         fd.append('description', desc);
         images.forEach((image) => {
@@ -156,7 +156,7 @@ export default function CreatePostPage() {
         const res = await data.json();
         if (res.success) {
             alert('Post created successfully!');
-            router.push('/explore'); // Redirect to home page
+            router.push(`/recommendation/${res.data[0].id}`); // Redirect to recommendation page
 
         } else {
             alert('Error creating post: ' + res.error);
