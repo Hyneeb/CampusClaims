@@ -28,9 +28,6 @@ export default function Explore(): JSX.Element {
     return (
         <div className="min-h-screen p-8 flex flex-col items-center gap-8">
             {/* Banner */}
-            <div id="banner" className="w-full text-center text-2xl font-bold border-b pb-4">
-                CampusClaims
-            </div>
 
             {/* Search + Filter section – stays narrow */}
             <section className="w-full max-w-4xl flex flex-col gap-6">
