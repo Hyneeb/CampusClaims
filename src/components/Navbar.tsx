@@ -42,20 +42,25 @@ export default function Navbar() {
                 {menuOpen && (
                     <div className="absolute top-10 right-0 mt-2 w-48 bg-white text-blue-600 rounded shadow-md z-50">
                         <ul className="flex flex-col">
-                        {!isLoggedIn ? (
-                            <>
-                            <li className="px-4 py-2 hover:bg-gray-100">
-                                <Link href="/login">Login</Link>
-                            </li>
-                            <li className="px-4 py-2 hover:bg-gray-100">
-                                <Link href="/signup">Sign Up</Link>
-                            </li>
-                            </>
-                        ) : (
-                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => setIsLoggedIn(false)}>
-                            Logout
-                            </li>
-                        )}
+                            {!isLoggedIn ? (
+                                <>
+                                    <li className="px-4 py-2 hover:bg-gray-100">
+                                        <Link href="/login">Login</Link>
+                                    </li>
+                                    <li className="px-4 py-2 hover:bg-gray-100">
+                                        <Link href="/signup">Sign Up</Link>
+                                    </li>
+                                </>
+                            ) : (
+                                <>
+                                    <li className="px-4 py-2 hover:bg-gray-100">
+                                        <Link href="/profile">Profile</Link>
+                                    </li>
+                                    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => setIsLoggedIn(false)}>
+                                        Logout
+                                    </li>
+                                </>
+                            )}
                         </ul>
                     </div>
                 )}

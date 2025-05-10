@@ -38,6 +38,13 @@ export default function Home() {
               Make a Post
           </Link>
 
+          <Link
+              href="/profile"
+              className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition"
+          >
+              Go to Profile
+          </Link>
+
       </div>
   );
 }
