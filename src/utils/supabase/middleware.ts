@@ -38,6 +38,9 @@ export async function updateSession(request: NextRequest) {
     if (pathname.startsWith('/create') && !user){
        return NextResponse.redirect(new URL('/login', request.url))
     }
+    if (pathname.startsWith('/profile') && !user){
+        return NextResponse.redirect(new URL('/login', request.url))
+    }
     return supabaseResponse
 
 }
