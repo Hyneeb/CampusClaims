@@ -14,7 +14,7 @@ export default function SchoolSelector() {
         <div className='flex items-center justify-center gap-14 text-2xl font-bold text-blue-600'>
             <button
             onClick={prevSchool}
-            className="bg-blue-500 hover:bg-blue-600 text-white rounded-full w-10 h-10 flex items-center justify-center">
+            className="bg-blue-600 hover:bg-blue-800 text-white rounded-full w-10 h-10 flex items-center justify-center">
             <ChevronLeftIcon className="w-5 h-5" />
             </button>
 
@@ -22,7 +22,7 @@ export default function SchoolSelector() {
 
             <button
             onClick={nextSchool}
-            className="bg-blue-500 hover:bg-blue-600 text-white rounded-full w-10 h-10 flex items-center justify-center">
+            className="bg-blue-600 hover:bg-blue-800 text-white rounded-full w-10 h-10 flex items-center justify-center">
             <ChevronRightIcon className="w-5 h-5" />
             </button>
         </div>
