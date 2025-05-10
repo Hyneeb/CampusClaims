@@ -13,12 +13,25 @@ export default function Navbar() {
 
     useEffect(() => {
         const checkUser = async () => {
-            const supabase = createClient();
+            const supabase = await createClient();
             const { data: { user } } = await supabase.auth.getUser();
             setIsLoggedIn(!!user);
         };
         checkUser();
-    }, []);
+    });
+
+
+    const handleLogout = async () => {
+        setMenuOpen(false);
+        const supabase = await createClient();
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+            console.error('Error logging out:', error);
+        } else {
+            setIsLoggedIn(false);
+        }
+
+    }
 
     return (
         <>
@@ -44,20 +57,20 @@ export default function Navbar() {
                         <ul className="flex flex-col">
                             {!isLoggedIn ? (
                                 <>
-                                    <li className="px-4 py-2 hover:bg-gray-100">
+                                    <li className="px-4 py-2 hover:bg-gray-100" onClick={() => setMenuOpen(false)}>
                                         <Link href="/login">Login</Link>
                                     </li>
-                                    <li className="px-4 py-2 hover:bg-gray-100">
+                                    <li className="px-4 py-2 hover:bg-gray-100" onClick={() => setMenuOpen(false)}>
                                         <Link href="/signup">Sign Up</Link>
                                     </li>
                                 </>
                             ) : (
                                 <>
-                                    <li className="px-4 py-2 hover:bg-gray-100">
+                                    <li className="px-4 py-2 hover:bg-gray-100" onClick={() => setMenuOpen(false)}>
                                         <Link href="/profile">Profile</Link>
                                     </li>
-                                    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => setIsLoggedIn(false)}>
-                                        Logout
+                                    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={handleLogout}>
+                                        <Link href="/">Logout</Link>
                                     </li>
                                 </>
                             )}

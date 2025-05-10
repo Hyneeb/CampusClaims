@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+
 export async function updateSession(request: NextRequest) {
     let supabaseResponse = NextResponse.next({
         request,
@@ -15,6 +16,7 @@ export async function updateSession(request: NextRequest) {
                     return request.cookies.getAll()
                 },
                 setAll(cookiesToSet) {
+                    //eslint-disable-next-line @typescript-eslint/no-unused-vars
                     cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
                     supabaseResponse = NextResponse.next({
                         request,
@@ -28,7 +30,14 @@ export async function updateSession(request: NextRequest) {
     )
 
     // refreshing the auth token
-    await supabase.auth.getUser()
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
 
+    const { pathname } = request.nextUrl
+    if (pathname.startsWith('/create') && !user){
+       return NextResponse.redirect(new URL('/login', request.url))
+    }
     return supabaseResponse
+
 }
