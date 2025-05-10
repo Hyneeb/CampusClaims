@@ -6,24 +6,27 @@ import { createClient } from '@/utils/supabase/client';
 import logo from '/public/logo-w.png';
 import { Bars3Icon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
+import {usePathname} from "next/navigation";
 
 export default function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const pathname = usePathname();
 
     useEffect(() => {
         const checkUser = async () => {
-            const supabase = await createClient();
+            const supabase = createClient();
             const { data: { user } } = await supabase.auth.getUser();
             setIsLoggedIn(!!user);
         };
         checkUser();
-    });
+    }, [pathname]);
 
 
     const handleLogout = async () => {
         setMenuOpen(false);
-        const supabase = await createClient();
+        setIsLoggedIn(false);
+        const supabase = createClient();
         const { error } = await supabase.auth.signOut();
         if (error) {
             console.error('Error logging out:', error);
@@ -32,6 +35,7 @@ export default function Navbar() {
         }
 
     }
+
 
     return (
         <>
