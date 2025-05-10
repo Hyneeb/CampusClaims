@@ -194,7 +194,8 @@ export async function fetchPost(id: string, router: ReturnType<typeof useRouter>
 
     return {
         ...data,
-        user: Array.isArray(data.user) ? data.user[0] : data.user
+        user: Array.isArray(data.user) ? data.user[0] : data.user,
+        title: `${data.post_type.toUpperCase()} ${data.title}`
     } as Post;
 
 
