@@ -47,6 +47,27 @@
         const event_date = formData.get('event_date') as string;
         const campus = formData.get('campus') as string;
         const images = formData.getAll('images') as File[];
+        const originalImages = formData.getAll('og_images') as string[];
+
+        if (originalImages.length) {
+            const paths = originalImages.map(urlToPath);
+            console.log("🗑️ Deleting storage paths:", paths);
+
+            // Destructure both data and error in one go
+            const { data: removedData, error: storageErr } = await supabase
+                .storage
+                .from('images')
+                .remove(paths);
+
+            // Now log both variables here
+            console.log("🗑️ Storage.remove → removedData:", removedData);
+            console.log("🗑️ Storage.remove → storageErr:", storageErr);
+
+            if (storageErr) {
+                console.warn("🔴 remove() error:", storageErr);
+            }
+        }
+
         const imageUrls: string[] = [];
         console.log("Form data:", { title, description, location, post_type, event_date, campus });
         console.log("Files received:", images.map(img => img.name));
@@ -109,4 +130,13 @@
             { status: 200 }
         );
 
+    }
+
+    function urlToPath(url: string) {
+        const marker = '/object/public/images/';
+        const idx = url.indexOf(marker);
+        if (idx === -1) return url;
+        // Grab the percent-encoded path, then decode it to match the actual object key
+        const encodedPath = url.slice(idx + marker.length);
+        return decodeURIComponent(encodedPath);
     }

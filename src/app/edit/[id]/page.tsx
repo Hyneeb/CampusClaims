@@ -26,6 +26,7 @@ export default function CreatePostPage() {
     const [date, setDate] = useState('');
     const [loading, setLoading] = useState(true);
     const router = useRouter();
+    const [ogImages, setOgImages] = useState<string[]>([]);
 
     const handleFilterChange = (value: string) => {
         setFilter(value); // update parent state
@@ -56,6 +57,7 @@ export default function CreatePostPage() {
                 setDesc(data.description);
                 setDate(data.event_date);
                 setFilter(data.post_type);
+                setOgImages(data.images);
 
                 const fetchedFiles: File[] = await Promise.all(
                     (data.images || []).map(async (url: string, index: number) => {
@@ -204,6 +206,7 @@ export default function CreatePostPage() {
             fd.append('images', image);
         });
         fd.append('event_date', date);
+        ogImages.forEach(url => fd.append('og_images', url));
 
         const data = await fetch(`/api/edit_post`, {
             method: 'POST',
