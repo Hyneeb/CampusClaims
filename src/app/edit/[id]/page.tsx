@@ -1,10 +1,20 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Filter from '@/components/Filter';
 import {useRouter} from "next/navigation";
+import {useParams} from "next/navigation";
+import { createClient } from '@/utils/supabase/client';
 
 export default function CreatePostPage() {
+    const params = useParams();
+    if (!params) {
+        throw new Error("Params are required");
+    }
+    const id = (params?.id as string);
+    if (!id) {
+        throw new Error("ID is required");
+    }
     const [images, setImages] = useState<File[]>([]);
     const [previews, setPreviews] = useState<string[]>([]);
     const [campus, setCampus] = useState('TMU');
@@ -14,11 +24,56 @@ export default function CreatePostPage() {
     const [desc, setDesc] = useState('');
     const [filter, setFilter] = useState("lost");
     const [date, setDate] = useState('');
+    const [loading, setLoading] = useState(true);
     const router = useRouter();
 
     const handleFilterChange = (value: string) => {
         setFilter(value); // update parent state
     };
+
+    useEffect(() => {
+        const fetchUserPosts = async () => {
+            const supabase = createClient();
+            const { data, error } = await supabase
+                .from('posts')
+                .select('*')
+                .eq('id', id)
+                .single();
+            if (error || !data) {
+                alert("Error fetching post data");
+                router.push('/profile');
+            }
+            if (data) {
+                setCampus(data.campus);
+                if (categories.includes(data.title)) {
+                    setCategory(data.title);
+                    setCustomItem('');
+                } else {
+                    setCategory('Other');       // Because it's not one of the fixed options
+                    setCustomItem(data.title);  // This is the actual custom value user typed
+                }
+                setLocation(data.location);
+                setDesc(data.description);
+                setDate(data.event_date);
+                setFilter(data.post_type);
+
+                const fetchedFiles: File[] = await Promise.all(
+                    (data.images || []).map(async (url: string, index: number) => {
+                        const res = await fetch(url);
+                        const blob = await res.blob();
+                        const name = `image_${index}.${blob.type.split('/')[1]}`;
+                        return new File([blob], name, { type: blob.type });
+                    })
+                );
+
+                setImages(fetchedFiles);
+                setPreviews(fetchedFiles.map(file => URL.createObjectURL(file)));
+            }
+        };
+        fetchUserPosts();
+        setLoading(false)
+        //eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [id]);
 
     const campusLocations = {
         TMU: [
@@ -139,6 +194,7 @@ export default function CreatePostPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const fd = new FormData();
+        fd.append('id', id);
         fd.append('post_type', filter);
         fd.append('campus', campus);
         fd.append('title', category === 'Other' ? customItem : category);
@@ -149,22 +205,27 @@ export default function CreatePostPage() {
         });
         fd.append('event_date', date);
 
-        const data = await fetch(`/api/create_post`, {
+        const data = await fetch(`/api/edit_post`, {
             method: 'POST',
             body: fd
         });
         const res = await data.json();
         if (res.success) {
-            alert('Post created successfully!');
-            router.push(`/recommendation/${res.data[0].id}`); // Redirect to recommendation page
+            alert('Post edited successfully!');
+            router.push('/profile'); //
 
         } else {
-            alert('Error creating post: ' + res.error);
+            alert('Error editing post: ' + res.error);
+            router.push('/profile');
 
         }
 
 
     };
+
+    if (loading) {
+        return <div className="flex items-center justify-center h-screen">Loading...</div>;
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
@@ -240,6 +301,7 @@ export default function CreatePostPage() {
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Last Seen Date</label>
                         <input
+                            value={date}
                             type="date"
                             className="w-full border border-gray-300 rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
                             onChange={(e) => setDate(e.target.value)}
@@ -294,6 +356,7 @@ export default function CreatePostPage() {
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Description</label>
                         <textarea
+                            value={desc}
                             rows={4}
                             className="w-full border border-gray-300 rounded-md p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
                             placeholder="Provide any identifying features or details..."
