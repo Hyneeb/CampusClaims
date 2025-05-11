@@ -15,11 +15,84 @@ type Post = {
     images: string[];
 };
 
+function urlToPath(url: string) {
+    const marker = '/object/public/images/';
+    const idx = url.indexOf(marker);
+    if (idx === -1) return url;
+    // Grab the percent-encoded path, then decode it to match the actual object key
+    const encodedPath = url.slice(idx + marker.length);
+    return decodeURIComponent(encodedPath);
+}
+
 export default function ProfilePage() {
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
     const [userName, setUserName] = useState<string | null>(null);
+
+
+    const deletePost = async (id:string) => {
+
+        const supabase = createClient();
+
+        // List all objects under post_images/
+        const { data: listData, error: listErr } = await supabase
+            .storage
+            .from('images')
+            .list('post_images', { limit: 100, offset: 0 });
+
+        if (listErr) {
+            console.error('Error listing bucket contents:', listErr);
+        } else {
+            console.log('🗂️ bucket contents under post_images/:', listData);
+        }
+
+        const { data: post, error: fetchErr } = await supabase
+            .from('posts')
+            .select('images')
+            .eq('id', id)
+            .single();
+
+        if (fetchErr) {
+            console.error('Error fetching post before delete:', fetchErr);
+            return;
+        }
+
+
+
+        const { error } = await supabase
+            .from('posts')
+            .delete()
+            .eq('id', id);
+        if (error) {
+            console.error('Error deleting post:', error);
+            return;
+        }
+
+        if (post?.images?.length) {
+            const paths = post.images.map(urlToPath);
+            console.log("🗑️ Deleting storage paths:", paths);
+
+            // Destructure both data and error in one go
+            const { data: removedData, error: storageErr } = await supabase
+                .storage
+                .from('images')
+                .remove(paths);
+
+            // Now log both variables here
+            console.log("🗑️ Storage.remove → removedData:", removedData);
+            console.log("🗑️ Storage.remove → storageErr:", storageErr);
+
+            if (storageErr) {
+                console.warn("🔴 remove() error:", storageErr);
+            }
+        }
+
+
+        setPosts((prevPosts) => prevPosts.filter((post) => post.id !== id));
+
+    }
+
 
     useEffect(() => {
         const supabase = createClient();
@@ -95,7 +168,7 @@ export default function ProfilePage() {
                                         e.stopPropagation();
                                         // You can replace this with a real delete handler
                                         if (confirm('Are you sure you want to delete this post?')) {
-                                            console.log('Delete post', post.id);
+                                            deletePost(post.id);
                                             // Call delete function here
                                         }
                                     }}
