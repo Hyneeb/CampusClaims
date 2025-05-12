@@ -14,7 +14,14 @@ const center = {
   lng: -79.3805
 };
 
-const TmuMap = () => {
+type Post = {
+    id: string;
+    title: string;
+    location: string;
+    post_type: 'lost' | 'found';
+};
+
+const TmuMap = ({ posts }: { posts: Post[] }) => {
   const mapRef = useRef<google.maps.Map | null>(null);
 
   const { isLoaded } = useLoadScript({

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { GoogleMap, useLoadScript } from '@react-google-maps/api';
 import { MapStyle } from './MapStyle';
 
@@ -22,11 +22,56 @@ type Post = {
 };
 
 const UtmMap = ({ posts }: { posts: Post[] }) => {
+  console.log('on render');
+    console.log(posts);
   const mapRef = useRef<google.maps.Map | null>(null);
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
   });
+
+  const markersRef = useRef<google.maps.Marker[]>([]);
+
+  /** Draw (or redraw) the post pins */
+  const plotMarkers = async () => {
+    if (!mapRef.current) return;           // map not ready
+    if (!posts.length) return;             // nothing to draw
+
+    // optional: clear old markers
+    markersRef.current.forEach((m) => m.setMap(null));
+    markersRef.current = [];
+
+    const coords = await fetch('/BuildingCoords.json').then((r) => r.json());
+
+    posts.forEach((post) => {
+      const pin = coords['UTM'][post.location];
+      if (!pin) return;
+
+      const marker = new google.maps.Marker({
+        position: pin,
+        map: mapRef.current,
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          fillColor: post.post_type === 'lost' ? '#e74c3c' : '#2ecc71',
+          fillOpacity: 0.9,
+          strokeWeight: 0,
+          scale: 6,
+        },
+        title: post.title,
+      });
+
+      marker.addListener('click', () => {
+        window.location.href = `/posting/${post.id}`;
+      });
+
+      markersRef.current.push(marker);
+    });
+  };
+
+  // run whenever mapRef or posts changes
+  useEffect(() => {
+    plotMarkers();
+  }, [posts, isLoaded]);
 
   return (
     isLoaded && (
@@ -41,6 +86,7 @@ const UtmMap = ({ posts }: { posts: Post[] }) => {
           fetch('/UtmBuildings.geojson')
             .then((res) => res.json())
             .then((data) => {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               data.features.forEach((feature: any) => {
                 const geometry = feature.geometry;
 
@@ -64,36 +110,6 @@ const UtmMap = ({ posts }: { posts: Post[] }) => {
               });
             });
 
-          // ✅ Plot lost/found markers from post data
-          fetch('/BuildingCoords.json')
-            .then((res) => res.json())
-            .then((coords) => {
-              console.log("whhaty  is thix..." + coords);
-              posts.forEach((post) => {
-                console.log("hi");
-                console.log("place:  " + post.location); 
-                const pin = coords['UTM'][post.location];
-                console.log(pin);
-                if (!pin) return;
-
-                const marker = new google.maps.Marker({
-                  position: pin,
-                  map: mapRef.current!,
-                  icon: {
-                    path: google.maps.SymbolPath.CIRCLE,
-                    fillColor: post.post_type === 'lost' ? '#e74c3c' : '#2ecc71',
-                    fillOpacity: 0.9,
-                    strokeWeight: 0,
-                    scale: 6,
-                  },
-                  title: post.title,
-                });
-
-                marker.addListener('click', () => {
-                  window.location.href = `/posting/${post.id}`;
-                });
-              });
-            });
         }}
         options={{
           disableDefaultUI: true,

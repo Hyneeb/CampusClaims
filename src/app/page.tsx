@@ -19,7 +19,7 @@ type Post = {
 export default function Home() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [campusIndex, setCampusIndex] = useState(0);
-  const campusNames = ['UTM', 'TMU'];
+  const campusNames = ['TMU', 'UTM'];
 
   const fetchPosts = async (campus: string) => {
     const supabase = createClient();
@@ -38,6 +38,7 @@ export default function Home() {
 
   useEffect(() => {                        // clear out stale data right away
     fetchPosts(campusNames[campusIndex]);
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [campusIndex]);
 
   
