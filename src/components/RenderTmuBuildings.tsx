@@ -1,85 +1,76 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { GoogleMap, useLoadScript } from '@react-google-maps/api';
 import { MapStyle } from './MapStyle';
 
 const containerStyle = {
   width: '100%',
-  height: '500px'
+  height: '500px',
 };
 
 const center = {
   lat: 43.6566,
-  lng: -79.3805
+  lng: -79.3805,
 };
 
 type Post = {
-    id: string;
-    title: string;
-    location: string;
-    post_type: 'lost' | 'found';
+  id: string;
+  title: string;
+  location: string;
+  post_type: 'lost' | 'found';
 };
 
 const TmuMap = ({ posts }: { posts: Post[] }) => {
+  console.log('on render');
+  console.log(posts);
+
   const mapRef = useRef<google.maps.Map | null>(null);
+  const markersRef = useRef<google.maps.Marker[]>([]);
 
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
   });
 
-  useEffect(() => {
-    if (isLoaded && mapRef.current) return;
+  /** Draw (or redraw) the post pins */
+  const plotMarkers = async () => {
+    if (!mapRef.current) return;           // map not ready
+    if (!posts.length) return;             // nothing to draw
 
-    fetch("https://m.torontomu.ca/core_apps/map/components/map_funcs.cfc?method=getBuildingData")
-      .then(res => res.json())
-      .then(data => {
-        data.forEach((building: any) => {
-          const coords = building.POLYGON.split(',\r').map((coord: string) => {
-            const [lat, lng] = coord.split(',').map(Number);
-            return { lat, lng };
-          });
+    // clear old markers
+    markersRef.current.forEach((m) => m.setMap(null));
+    markersRef.current = [];
 
-          const polygon = new google.maps.Polygon({
-            paths: coords,
-            strokeColor: '#ffffff',
-            strokeOpacity: 0.8,
-            strokeWeight: 1,
-            fillColor: '#5289bf',
-            fillOpacity: 1.0
-          });
+    const coords = await fetch('/BuildingCoords.json').then((r) => r.json());
 
-          polygon.setMap(mapRef.current!);
+    posts.forEach((post) => {
+      const pin = coords['TMU'][post.location];
+      if (!pin) return;
 
-          const bounds = new google.maps.LatLngBounds();
-          coords.forEach((coord: google.maps.LatLngLiteral) => bounds.extend(coord));
-          const labelPos = bounds.getCenter();
-          const marker = new google.maps.Marker({
-            position: labelPos,
-            map: mapRef.current!,
-            icon: {
-                url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-                  <svg xmlns="http://www.w3.org/2000/svg" width="60" height="20">
-                    <text x="30" y="15" font-size="13" font-weight="bold"
-                          text-anchor="middle"
-                          fill="white" stroke="black" stroke-width="0.75" font-family="Arial">
-                      ${building.CODE}
-                    </text>
-                  </svg>
-                `),
-                scaledSize: new google.maps.Size(60, 20),
-                anchor: new google.maps.Point(30, 10)
-              },
-            optimized: false // allows proper label rendering
-            });
-
-            google.maps.event.addListener(mapRef.current!, 'zoom_changed', () => {
-                const zoom = mapRef.current!.getZoom()!;
-                marker.setVisible(zoom >= 16);
-            });
-        });
+      const marker = new google.maps.Marker({
+        position: pin,
+        map: mapRef.current,
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          fillColor: post.post_type === 'lost' ? '#e74c3c' : '#2ecc71',
+          fillOpacity: 0.9,
+          strokeWeight: 0,
+          scale: 6,
+        },
+        title: post.title,
       });
-  }, [isLoaded, mapRef.current]);
+
+      marker.addListener('click', () => {
+        window.location.href = `/posting/${post.id}`;
+      });
+
+      markersRef.current.push(marker);
+    });
+  };
+
+  useEffect(() => {
+    plotMarkers();
+  }, [posts, isLoaded]);
 
   return (
     isLoaded && (
@@ -89,10 +80,62 @@ const TmuMap = ({ posts }: { posts: Post[] }) => {
         zoom={16}
         onLoad={(map) => {
           mapRef.current = map;
+
+          // ✅ Draw building polygons from TMU endpoint
+          fetch("https://m.torontomu.ca/core_apps/map/components/map_funcs.cfc?method=getBuildingData")
+            .then(res => res.json())
+            .then(data => {
+              data.forEach((building: any) => {
+                const coords = building.POLYGON.split(',\r').map((coord: string) => {
+                  const [lat, lng] = coord.split(',').map(Number);
+                  return { lat, lng };
+                });
+
+                const polygon = new google.maps.Polygon({
+                  paths: coords,
+                  strokeColor: '#ffffff',
+                  strokeOpacity: 0.8,
+                  strokeWeight: 1,
+                  fillColor: '#5289bf',
+                  fillOpacity: 1.0,
+                  zIndex: 1000,
+                });
+
+                polygon.setMap(mapRef.current!);
+
+                // ✅ Add building code label marker
+                const bounds = new google.maps.LatLngBounds();
+                coords.forEach((coord: google.maps.LatLngLiteral) => bounds.extend(coord));
+                const labelPos = bounds.getCenter();
+                const marker = new google.maps.Marker({
+                  position: labelPos,
+                  map: mapRef.current!,
+                  icon: {
+                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                      <svg xmlns="http://www.w3.org/2000/svg" width="60" height="20">
+                        <text x="30" y="15" font-size="13" font-weight="bold"
+                              text-anchor="middle"
+                              fill="white" stroke="black" stroke-width="0.75" font-family="Arial">
+                          ${building.CODE}
+                        </text>
+                      </svg>
+                    `),
+                    scaledSize: new google.maps.Size(60, 20),
+                    anchor: new google.maps.Point(30, 10),
+                  },
+                  optimized: false,
+                });
+
+                google.maps.event.addListener(mapRef.current!, 'zoom_changed', () => {
+                  const zoom = mapRef.current!.getZoom()!;
+                  marker.setVisible(zoom >= 16);
+                });
+              });
+            });
         }}
         options={{
           disableDefaultUI: true,
-          styles: MapStyle
+          styles: MapStyle,
         }}
       />
     )
