@@ -7,10 +7,10 @@ import Link from "next/link";
 import {createClient} from "@/utils/supabase/client";
 
 export default function Explore(): JSX.Element {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [filter, setFilter] = useState<string>("lost");
     const [campus, setCampus] = useState<string>("");
     const [posts, setPosts] = useState<string[]>([]);
+    const [search, setSearch] = useState<string>("");
 
     useEffect(() => {
         const res = fetchPosts(filter, campus);
@@ -24,6 +24,22 @@ export default function Explore(): JSX.Element {
     const handleFilterChange = (value: string) => {
         setFilter(value); // update parent state
     };
+
+
+    const handleSearchSubmit = (e: React.KeyboardEvent<HTMLInputElement> ) => {
+        e.preventDefault();
+        if (e.key != 'Enter'){
+            return;
+        }
+
+        const res = fetchPosts(filter, campus, search);
+        res.then((data) => {
+            if (data) {
+                setPosts(data);
+            }
+        });
+
+    }
 
     return (
         <div className="min-h-screen p-8 flex flex-col items-center gap-8">
@@ -41,7 +57,7 @@ export default function Explore(): JSX.Element {
                                 onChange={(e) => setCampus(e.target.value)}
                                 className="w-full appearance-none px-4 py-3 pr-10 rounded-full text-sm text-center shadow-sm border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
                             >
-                                <option disabled value="">Choose A Campus...g</option>
+                                <option value="">Choose A Campus...g</option>
                                 <option value="TMU">Toronto Metropolitan University (TMU)</option>
                                 <option value="UTM">University of Toronto Mississauga (UTM)</option>
                             </select>
@@ -57,6 +73,8 @@ export default function Explore(): JSX.Element {
                                 type="text"
                                 placeholder="Search..."
                                 className="w-full px-5 pr-12 py-3 text-base border border-gray-300 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-800 transition"
+                                onChange={(e) => setSearch(e.target.value)}
+                                onKeyUp={handleSearchSubmit}
                             />
                             <button
                                 type="button"
@@ -89,14 +107,27 @@ export default function Explore(): JSX.Element {
     );
 }
 
-async function fetchPosts(post_type: string, campus: string): Promise<string[]> {
+async function fetchPosts(post_type: string, campus: string, item?: string): Promise<string[]> {
+    const VALID_CAMPUSES = ["TMU", "UTM"] as const;
     const supabase = await createClient();
 
-    const { data, error } = await supabase
+
+    let query = supabase
         .from('posts')
         .select('id') // just fetch IDs
-        .eq('post_type', post_type)
-        .eq('campus', campus); // assuming `campus` is a column in your table
+        .eq('post_type', post_type);
+    if (item){
+        query = query.ilike('title', `%${item}%`);
+    }
+
+    if (VALID_CAMPUSES.includes(campus as typeof VALID_CAMPUSES[number])) {
+        query = query.eq('campus', campus); // assuming `campus` is a column in your table
+    }
+
+
+    // without using search:
+
+    const {data, error} = await query
 
     if (error) {
         console.error("Failed to fetch posts:", error);
