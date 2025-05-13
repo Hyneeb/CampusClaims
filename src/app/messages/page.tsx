@@ -106,6 +106,7 @@ export default function MessagingPage() {
         }
 
         setConversations((prev) => [...prev, newConv]);
+        setNewPartnerId('');
 
     }
 
