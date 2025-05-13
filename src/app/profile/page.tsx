@@ -15,89 +15,24 @@ type Post = {
     images: string[];
 };
 
-function urlToPath(url: string) {
-    const marker = '/object/public/images/';
-    const idx = url.indexOf(marker);
-    if (idx === -1) return url;
-    // Grab the percent-encoded path, then decode it to match the actual object key
-    const encodedPath = url.slice(idx + marker.length);
-    return decodeURIComponent(encodedPath);
-}
+type Conversation = {
+    id: string;
+    user1_id: string;
+    user2_id: string;
+};
 
 export default function ProfilePage() {
     const [posts, setPosts] = useState<Post[]>([]);
+    const [conversations, setConversations] = useState<Conversation[]>([]);
+    const [userId, setUserId] = useState<string | null>(null);
+    const [usernames, setUsernames] = useState<Record<string, string>>({});
+    const [userName, setUserName] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
-    const [userName, setUserName] = useState<string | null>(null);
-
-
-    const deletePost = async (id:string) => {
-
-        const supabase = createClient();
-
-        // List all objects under post_images/
-        const { data: listData, error: listErr } = await supabase
-            .storage
-            .from('images')
-            .list('post_images', { limit: 100, offset: 0 });
-
-        if (listErr) {
-            console.error('Error listing bucket contents:', listErr);
-        } else {
-            console.log('🗂️ bucket contents under post_images/:', listData);
-        }
-
-        const { data: post, error: fetchErr } = await supabase
-            .from('posts')
-            .select('images')
-            .eq('id', id)
-            .single();
-
-        if (fetchErr) {
-            console.error('Error fetching post before delete:', fetchErr);
-            return;
-        }
-
-
-
-        const { error } = await supabase
-            .from('posts')
-            .delete()
-            .eq('id', id);
-        if (error) {
-            console.error('Error deleting post:', error);
-            return;
-        }
-
-        if (post?.images?.length) {
-            const paths = post.images.map(urlToPath);
-            console.log("🗑️ Deleting storage paths:", paths);
-
-            // Destructure both data and error in one go
-            const { data: removedData, error: storageErr } = await supabase
-                .storage
-                .from('images')
-                .remove(paths);
-
-            // Now log both variables here
-            console.log("🗑️ Storage.remove → removedData:", removedData);
-            console.log("🗑️ Storage.remove → storageErr:", storageErr);
-
-            if (storageErr) {
-                console.warn("🔴 remove() error:", storageErr);
-            }
-        }
-
-
-        setPosts((prevPosts) => prevPosts.filter((post) => post.id !== id));
-
-    }
-
 
     useEffect(() => {
-        const supabase = createClient();
-
-        const fetchUserPosts = async () => {
+        const fetchProfileData = async () => {
+            const supabase = createClient();
             const {
                 data: { user },
                 error,
@@ -108,6 +43,7 @@ export default function ProfilePage() {
                 return;
             }
 
+            setUserId(user.id);
 
             const { data: userData, error: userError } = await supabase
                 .from('users')
@@ -116,33 +52,77 @@ export default function ProfilePage() {
                 .single();
             if (userError) {
                 console.error('Error fetching user data:', userError);
-                return [];
+            } else {
+                setUserName(userData.username ?? null);
             }
-            setUserName(userData.username ?? null);
 
-
-            const { data, error: postError } = await supabase
+            const { data: postData, error: postError } = await supabase
                 .from('posts')
                 .select('*')
                 .eq('user_id', user.id);
 
-            if (postError) {
-                console.error('Error fetching posts:', postError);
-            } else {
-                setPosts(data || []);
+            if (postError) console.error('Error fetching posts:', postError);
+            else setPosts(postData || []);
+
+            const { data: convoData, error: convoError } = await supabase
+                .from('conversations')
+                .select('*')
+                .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`);
+
+            if (convoError) console.error('Error fetching conversations:', convoError);
+            else setConversations(convoData || []);
+
+            // Collect unique user IDs to look up usernames
+            const otherUserIds = new Set<string>();
+            convoData?.forEach((c) => {
+                const otherId = c.user1_id === user.id ? c.user2_id : c.user1_id;
+                otherUserIds.add(otherId);
+            });
+
+            if (otherUserIds.size > 0) {
+                const { data: users, error: usernamesError } = await supabase
+                    .from('users')
+                    .select('id, username')
+                    .in('id', Array.from(otherUserIds));
+
+                if (usernamesError) {
+                    console.error('Error fetching usernames:', usernamesError);
+                } else {
+                    const mapping: Record<string, string> = {};
+                    users?.forEach((u) => (mapping[u.id] = u.username));
+                    setUsernames(mapping);
+                }
             }
 
             setLoading(false);
         };
 
-        void fetchUserPosts();
+        fetchProfileData();
     }, [router]);
 
-    if (loading) return <p className="p-6">Loading your posts...</p>;
+    if (loading) return <p className="p-6">Loading your profile...</p>;
 
     return (
         <div className="max-w-4xl mx-auto py-10 px-4">
             <h1 className="text-2xl font-bold mb-6 text-center">Welcome, {userName}</h1>
+
+            <h2 className="text-xl font-semibold mb-4">Your Conversations</h2>
+            <div className="grid gap-3 mb-10">
+                {conversations.map((c) => {
+                    const otherUserId = c.user1_id === userId ? c.user2_id : c.user1_id;
+                    return (
+                        <Link
+                            key={c.id}
+                            href={`/chat/${c.id}`}
+                            className="block border border-blue-500 rounded p-4 text-blue-600 hover:bg-blue-50"
+                        >
+                            Conversation with {usernames[otherUserId] ?? otherUserId}
+                        </Link>
+                    );
+                })}
+            </div>
+
+            <h2 className="text-xl font-semibold mb-4">Your Posts</h2>
             {posts.length === 0 ? (
                 <p className="text-center">You haven&#39;t created any posts yet.</p>
             ) : (
@@ -152,7 +132,6 @@ export default function ProfilePage() {
                             key={post.id}
                             className="relative group border p-4 rounded shadow hover:bg-gray-50 transition"
                         >
-                            {/* Hover buttons */}
                             <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                                 <button
                                     onClick={(e) => {
@@ -164,12 +143,12 @@ export default function ProfilePage() {
                                     Edit
                                 </button>
                                 <button
-                                    onClick={(e) => {
+                                    onClick={async (e) => {
                                         e.stopPropagation();
-                                        // You can replace this with a real delete handler
                                         if (confirm('Are you sure you want to delete this post?')) {
-                                            deletePost(post.id);
-                                            // Call delete function here
+                                            const supabase = createClient();
+                                            const { error } = await supabase.from('posts').delete().eq('id', post.id);
+                                            if (!error) setPosts((prev) => prev.filter((p) => p.id !== post.id));
                                         }
                                     }}
                                     className="bg-red-600 text-white text-xs px-2 py-1 rounded hover:bg-red-700"
@@ -177,8 +156,6 @@ export default function ProfilePage() {
                                     Delete
                                 </button>
                             </div>
-
-                            {/* Post content */}
                             <Link href={`/posting/${post.id}`}>
                                 <div>
                                     <h2 className="text-xl font-semibold">{post.title}</h2>
@@ -186,7 +163,7 @@ export default function ProfilePage() {
                                     <p className="text-sm text-gray-500">📍 {post.location}</p>
                                     <p className="text-sm text-gray-500">🏫 {post.campus}</p>
                                     <p className="text-sm text-gray-500">🗓️ {post.event_date}</p>
-                                    {post.images && post.images.length > 0 && (
+                                    {post.images?.length > 0 && (
                                         <div className="flex gap-2 mt-2">
                                             {post.images.map((url, idx) => (
                                                 <img
