@@ -11,7 +11,7 @@ import {useParams, useRouter} from "next/navigation";
 
 export type Post = {
     id: string;
-    user: { username: string };
+    user: { id: string, username: string };
     post_type: 'lost' | 'found';
     title: string;
     description: string | null;
@@ -110,7 +110,7 @@ function Posting({ id: propId, preview = false }: { id?: string; preview?: boole
                         {!preview && (
                             <p className="text-gray-800 leading-relaxed whitespace-pre-line">{post.description}</p>
                         )}
-                        <ChatButton/>
+                        <ChatButton recipientId={post.user.id} />
                     </div>
                 </div>
             </div>
@@ -172,8 +172,10 @@ export async function fetchPost(id: string, router: ReturnType<typeof useRouter>
       images,
       created_at,
       user:user_id!inner (
+         id,
         username
       )
+
     `)
         .eq('id', id)
         .single();
