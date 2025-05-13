@@ -97,11 +97,16 @@ export default function ProfilePage() {
     const deletePost = async (id: string) => {
         const supabase = createClient();
 
-        const { data: post } = await supabase
+        const { data: post, error: fetchErr } = await supabase
             .from('posts')
             .select('images')
             .eq('id', id)
             .single();
+
+        if (fetchErr) {
+            console.error('Error fetching post before delete:', fetchErr);
+            return;
+        }
 
         const { error } = await supabase
             .from('posts')
@@ -112,7 +117,13 @@ export default function ProfilePage() {
 
         if (post?.images?.length) {
             const paths = post.images.map(urlToPath);
-            await supabase.storage.from('images').remove(paths);
+            const {error: storageErr } = await supabase
+                .storage
+                .from('images')
+                .remove(paths);
+            if (storageErr) {
+                console.warn("🔴 remove() error:", storageErr);
+            }
         }
 
         setPosts((prev) => prev.filter((p) => p.id !== id));
