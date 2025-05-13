@@ -45,19 +45,19 @@ export default function CreatePostPage() {
                 router.push('/profile');
             }
             if (data) {
-                setCampus(data.campus);
+                setCampus(data.campus ?? '');
                 if (categories.includes(data.title)) {
-                    setCategory(data.title);
+                    setCategory(data.title ?? '');
                     setCustomItem('');
                 } else {
-                    setCategory('Other');       // Because it's not one of the fixed options
-                    setCustomItem(data.title);  // This is the actual custom value user typed
+                    setCategory('Other');
+                    setCustomItem(data.title ?? '');
                 }
-                setLocation(data.location);
-                setDesc(data.description);
-                setDate(data.event_date);
-                setFilter(data.post_type);
-                setOgImages(data.images);
+                setLocation(data.location ?? '');
+                setDesc(data.description ?? '');
+                setDate(data.event_date ?? '');
+                setFilter(data.post_type ?? 'lost');
+                setOgImages(data.images ?? []);
 
                 const fetchedFiles: File[] = await Promise.all(
                     (data.images || []).map(async (url: string, index: number) => {
