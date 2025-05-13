@@ -45,6 +45,14 @@ export default function Home() {
               Go to Profile
           </Link>
 
+          <Link
+              href="/chat/11111111-2222-3333-4444-555555555555"
+              className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition"
+          >
+              Go to Sample convo
+          </Link>
+
+
       </div>
   );
 }

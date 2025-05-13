@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
+import Chat from "@/app/chat/[id]/page";
 
 interface Conversation {
     id: string;
@@ -10,21 +11,12 @@ interface Conversation {
     user2_id: string;
 }
 
-interface Message {
-    id: number;
-    content: string;
-    sender_id: string;
-    conversation_id: string;
-    created_at?: string;
-}
-
 export default function MessagingPage() {
     const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
     const [conversations, setConversations] = useState<Conversation[]>([]);
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [message, setMessage] = useState('');
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);
     const [newPartnerId, setNewPartnerId] = useState('');
+    const [usernames, setUsernames] = useState<Record<string, string>>({})
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -49,62 +41,41 @@ export default function MessagingPage() {
             const { data, error } = await supabase
                 .from('conversations')
                 .select('*')
-                .or(`(user1_id.eq.${currentUserId},user2_id.eq.${currentUserId})`);
 
             if (error) console.error('Error fetching conversations:', error);
             else {
                 console.log("Fetched conversations:", data);
                 setConversations(data as Conversation[]);
+
+                const userIds = new Set<string>();
+                data?.forEach((conv: Conversation) => {
+                    if (conv.user1_id !== currentUserId) userIds.add(conv.user1_id);
+                    if (conv.user2_id !== currentUserId) userIds.add(conv.user2_id);
+                });
+
+                // Fetch usernames for these IDs
+                const { data: users, error: userError } = await supabase
+                    .from('users')
+                    .select('id, username')
+                    .in('id', Array.from(userIds));
+
+                if (userError) {
+                    console.error('Error fetching usernames:', userError);
+                } else if (users) {
+                    setUsernames(users.reduce<Record<string, string>>(
+                        (acc, user) => ({ ...acc, [user.id]: user.username }),
+                        {}
+                    ));
+                }
+
+
             }
         };
 
         fetchConversations();
     }, [currentUserId]);
 
-    useEffect(() => {
-        if (!selectedConversation) return;
 
-        const fetchMessages = async () => {
-            const supabase = createClient();
-            const { data, error } = await supabase
-                .from('messages')
-                .select('*')
-                .eq('conversation_id', selectedConversation.id)
-                .order('created_at', { ascending: true });
-
-            if (error) console.error('Error fetching messages:', error);
-            else setMessages(data as Message[]);
-        };
-
-        fetchMessages();
-    }, [selectedConversation]);
-
-    const sendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (!message.trim() || !selectedConversation || !currentUserId) return;
-
-        const supabase = createClient();
-        const { error } = await supabase.from('messages').insert({
-            conversation_id: selectedConversation.id,
-            sender_id: currentUserId,
-            content: message,
-        });
-
-        if (error) {
-            console.error('Send message error:', error);
-        } else {
-            setMessage('');
-            setMessages((prev) => [
-                ...prev,
-                {
-                    id: Date.now(),
-                    content: message,
-                    sender_id: currentUserId,
-                    conversation_id: selectedConversation.id,
-                },
-            ]);
-        }
-    };
 
     const createConversation = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -159,53 +130,17 @@ export default function MessagingPage() {
                     <div
                         key={conv.id}
                         onClick={() => setSelectedConversation(conv)}
-                        className={`p-3 rounded-xl cursor-pointer hover:bg-yellow-100 mb-2 ${selectedConversation?.id === conv.id ? 'bg-yellow-200' : ''}`}
+                        className={`p-3 rounded-xl cursor-pointer accent-gray-400 ${selectedConversation?.id === conv.id ? 'bg' : ''}`}
                     >
                         <p className="font-medium text-yellow-900">
-                            {conv.title || `Chat with ${conv.user1_id === currentUserId ? conv.user2_id : conv.user1_id}`}
+                            chat with {usernames[conv.user1_id === currentUserId ? conv.user2_id : conv.user1_id] || "Unknown user"}
                         </p>
                     </div>
                 ))}
             </div>
 
-            <div className="flex-1 flex flex-col bg-yellow-50 p-4">
-                {selectedConversation ? (
-                    <>
-                        <div className="mb-4 border-b pb-2">
-                            <h3 className="text-xl font-bold text-yellow-800">
-                                {selectedConversation.title || 'Chat'}
-                            </h3>
-                        </div>
-
-                        <div className="flex-1 overflow-y-auto space-y-2 mb-4">
-                            {messages.map((msg) => (
-                                <div
-                                    key={msg.id}
-                                    className={`p-2 rounded-lg max-w-xs break-words ${msg.sender_id === currentUserId ? 'bg-yellow-300 self-end text-right' : 'bg-white self-start text-left'}`}
-                                >
-                                    {msg.content}
-                                </div>
-                            ))}
-                        </div>
-
-                        <form onSubmit={sendMessage} className="flex gap-2">
-                            <input
-                                value={message}
-                                onChange={(e) => setMessage(e.target.value)}
-                                placeholder="Type a message..."
-                                className="flex-1 p-2 border rounded-md"
-                            />
-                            <button
-                                type="submit"
-                                className="bg-yellow-600 hover:bg-yellow-700 text-white py-2 px-4 rounded"
-                            >
-                                Send
-                            </button>
-                        </form>
-                    </>
-                ) : (
-                    <div className="text-center text-gray-500 mt-20">Select a conversation to start chatting.</div>
-                )}
+            <div className="flex-1 flex flex-col p-4">
+                <Chat id={"11111111-2222-3333-4444-555555555555"}/>
             </div>
         </div>
     );
