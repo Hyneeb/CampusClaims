@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import Chat from "@/app/chat/[id]/page";
+import convoMaker from "@/utils/ConvoMaker";
 
 interface Conversation {
     id: string;
@@ -73,75 +74,95 @@ export default function MessagingPage() {
         };
 
         fetchConversations();
-    }, [currentUserId]);
+    }, [currentUserId, conversations]);
 
-
-
-    const createConversation = async (e: React.FormEvent<HTMLFormElement>) => {
+    const createConversation = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!currentUserId || !newPartnerId || newPartnerId === currentUserId) {
-            alert("Invalid partner ID");
+        if (!currentUserId || !newPartnerId) return;
+        const supabase = await createClient();
+        const {data, error} = await supabase
+            .from('users')
+            .select('id')
+            .eq('username', newPartnerId).
+            single();
+        if (error) {
+            console.error('Error fetching user:', error);
+            return;
+        }
+        if (!data) {
+            console.error('User not found');
+            return;
+        }
+        const partnerId = data.id;
+
+        const newConv = await convoMaker(currentUserId, partnerId);
+        if (!newConv) {
+            console.error('Error creating conversation');
             return;
         }
 
-        const supabase = createClient();
-        const { error } = await supabase.from('conversations').insert({
-            user1_id: currentUserId,
-            user2_id: newPartnerId,
-        });
+        setConversations((prev) => [...prev, newConv]);
 
-        if (error) {
-            console.error('Error creating conversation:', error);
-            alert("Failed to create conversation");
-        } else {
-            alert("Conversation created!");
-            setNewPartnerId('');
-            const { data } = await supabase
-                .from('conversations')
-                .select('*')
-                .or(`(user1_id.eq.${currentUserId},user2_id.eq.${currentUserId})`);
-            setConversations(data as Conversation[]);
-        }
-    };
+    }
+
 
     return (
-        <div className="min-h-screen flex">
-            <div className="w-1/3 border-r bg-white p-4 overflow-y-auto">
-                <h2 className="text-lg font-bold mb-4">Conversations</h2>
+        <div className="min-h-screen flex bg-gray-100">
+            {/* Sidebar */}
+            <div className="w-80 bg-white shadow-md p-4 border-r border-gray-200">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4">Conversations</h2>
 
+                {/* New Conversation Form */}
                 <form onSubmit={createConversation} className="mb-6 flex flex-col gap-2">
-                    <label className="text-sm font-semibold text-gray-700">Start New Conversation</label>
+                    <label className="text-sm font-medium text-gray-700">Start New Conversation</label>
                     <input
                         type="text"
-                        placeholder="Enter other user's ID"
+                        placeholder="Enter user ID"
                         value={newPartnerId}
                         onChange={(e) => setNewPartnerId(e.target.value)}
-                        className="p-2 border rounded"
+                        className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <button
                         type="submit"
-                        className="bg-blue-600 text-white py-1 px-4 rounded hover:bg-blue-700"
+                        className="bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
                     >
                         Create
                     </button>
                 </form>
 
-                {conversations.map((conv) => (
-                    <div
-                        key={conv.id}
-                        onClick={() => setSelectedConversation(conv)}
-                        className={`p-3 rounded-xl cursor-pointer accent-gray-400 ${selectedConversation?.id === conv.id ? 'bg' : ''}`}
-                    >
-                        <p className="font-medium text-yellow-900">
-                            chat with {usernames[conv.user1_id === currentUserId ? conv.user2_id : conv.user1_id] || "Unknown user"}
-                        </p>
-                    </div>
-                ))}
+                {/* Conversation List */}
+                <div className="space-y-2">
+                    {conversations.map((conv) => {
+                        const isActive = selectedConversation?.id === conv.id;
+                        const otherUserId = conv.user1_id === currentUserId ? conv.user2_id : conv.user1_id;
+                        const displayName = usernames[otherUserId] || "Unknown user";
+
+                        return (
+                            <div
+                                key={conv.id}
+                                onClick={() => setSelectedConversation(conv)}
+                                className={`p-3 rounded-lg cursor-pointer transition ${
+                                    isActive
+                                        ? 'bg-blue-100 text-blue-800 font-semibold'
+                                        : 'hover:bg-gray-100 text-gray-800'
+                                }`}
+                            >
+                                <p className="truncate">Chat with {displayName}</p>
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
 
-            <div className="flex-1 flex flex-col p-4">
-                <Chat id={"11111111-2222-3333-4444-555555555555"}/>
+            {/* Chat Area */}
+            <div className="flex-1 flex flex-col p-6">
+                {selectedConversation ? (
+                    <Chat id={selectedConversation.id} />
+                ) : (
+                    <div className="text-gray-500 text-lg">Select a conversation to start chatting</div>
+                )}
             </div>
         </div>
     );
+
 }

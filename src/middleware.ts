@@ -15,6 +15,6 @@ export const config = {
          * - favicon.ico (favicon file)
          * Feel free to modify this pattern to include more paths.
          */
-        '/create/:path*', '/profile/:path*',
+        '/create/:path*', '/profile/:path*', '/chat/:path*', '/messages/:path*',
     ],
 }

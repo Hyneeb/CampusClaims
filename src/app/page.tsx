@@ -52,6 +52,13 @@ export default function Home() {
               Go to Sample convo
           </Link>
 
+          <Link
+              href="/messages"
+              className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition"
+          >
+              Go to messages
+          </Link>
+
 
       </div>
   );

@@ -41,6 +41,14 @@ export async function updateSession(request: NextRequest) {
     if (pathname.startsWith('/profile') && !user){
         return NextResponse.redirect(new URL('/login', request.url))
     }
+
+    if (pathname.startsWith('/chat') && !user){
+        return NextResponse.redirect(new URL('/login', request.url))
+    }
+    if (pathname.startsWith('/messages') && !user){
+        return NextResponse.redirect(new URL('/login', request.url))
+    }
+
     return supabaseResponse
 
 }
