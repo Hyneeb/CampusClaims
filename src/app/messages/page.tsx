@@ -42,6 +42,10 @@ export default function MessagingPage() {
             const { data, error } = await supabase
                 .from('conversations')
                 .select('*')
+                .order('last_message_at', { ascending: false,
+                    // @ts-expect-error: nullsLast is valid but not typed yet
+                    nullsLast: true,
+                });
 
             if (error) console.error('Error fetching conversations:', error);
             else {
