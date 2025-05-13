@@ -53,6 +53,11 @@ export default function Chat(props: { id?: string }) {
         if (data) {
             setOptimisticIds((prev) => [...prev, data.id]);
             setMessages((prev) => [...prev, data]); // Optimistically update
+
+            await supabase
+                .from('conversations')
+                .update({ last_message_at: data.created_at }) // <-- sets timestamp of last message
+                .eq('id', convoId);
         }
     };
 
