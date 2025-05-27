@@ -60,40 +60,6 @@ export default function Home() {
           {SelectedMap}
         </div>
 
-          <Link
-              href="/explore"
-              className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition"
-          >
-              Explore!
-          </Link>
-
-          <Link
-              href="/create"
-              className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition"
-          >
-              Make a Post
-          </Link>
-
-          <Link
-              href="/profile"
-              className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition"
-          >
-              Go to Profile
-          </Link>
-
-          <Link
-              href="/chat/11111111-2222-3333-4444-555555555555"
-              className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition"
-          >
-              Go to Sample convo
-          </Link>
-
-          <Link
-              href="/messages"
-              className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition"
-          >
-              Go to messages
-          </Link>
 
 
         {/* Post Button */}

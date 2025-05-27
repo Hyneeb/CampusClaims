@@ -59,7 +59,6 @@ export default function Navbar() {
                 {menuOpen && (
                     <div className="absolute top-10 right-0 mt-2 w-48 bg-white text-blue-600 rounded shadow-md z-50">
                         <ul className="flex flex-col">
-<<<<<<< HEAD
                             {!isLoggedIn ? (
                                 <>
                                     <li className="px-4 py-2 hover:bg-gray-100" onClick={() => setMenuOpen(false)}>
@@ -67,6 +66,9 @@ export default function Navbar() {
                                     </li>
                                     <li className="px-4 py-2 hover:bg-gray-100" onClick={() => setMenuOpen(false)}>
                                         <Link href="/signup">Sign Up</Link>
+                                    </li>
+                                    <li className="px-4 py-2 hover:bg-gray-100">
+                                        <Link href="/explore">Explore!</Link>
                                     </li>
                                 </>
                             ) : (
@@ -77,32 +79,15 @@ export default function Navbar() {
                                     <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={handleLogout}>
                                         <Link href="/">Logout</Link>
                                     </li>
+                                    <li className="px-4 py-2 hover:bg-gray-100" onClick={() => setMenuOpen(false)}>
+                                        <Link href="/explore">Explore!</Link>
+                                    </li>
+                                    <li className="px-4 py-2 hover:bg-gray-100" onClick={() => setMenuOpen(false)}>
+                                        <Link href="/messages">My Messages</Link>
+                                    </li>
+
                                 </>
                             )}
-=======
-                        {!isLoggedIn ? (
-                            <>
-                            <li className="px-4 py-2 hover:bg-gray-100">
-                                <Link href="/explore">Explore!</Link>
-                            </li>
-                            <li className="px-4 py-2 hover:bg-gray-100">
-                                <Link href="/login">Login</Link>
-                            </li>
-                            <li className="px-4 py-2 hover:bg-gray-100">
-                                <Link href="/signup">Sign Up</Link>
-                            </li>
-                            </>
-                        ) : (
-                            <>
-                            <li className="px-4 py-2 hover:bg-gray-100">
-                                <Link href="/explore">Explore!</Link>
-                            </li>
-                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => setIsLoggedIn(false)}>
-                            Logout
-                            </li>
-                            </>
-                        )}
->>>>>>> hp-add
                         </ul>
                     </div>
                 )}
