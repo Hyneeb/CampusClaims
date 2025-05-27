@@ -1,0 +1,197 @@
+{
+  "TMU": {
+    "Atrium on Bay": { "lat": 43.65635, "lng": -79.38265 },
+    "Architecture Building — Paul H. Cocker Gallery": { "lat": 43.65946, "lng": -79.37791 },
+    "Campus Store": { "lat": 43.65755, "lng": -79.380295 },
+    "114 Bond Street": { "lat": 43.657157, "lng": -79.378294 },
+    "111 Bond Street": { "lat": 43.657157, "lng": -79.378294 },
+    "Bell Trinity Square": { "lat": 43.653626, "lng": -79.382256 },
+    "Carlton Cinema": { "lat": 43.661606, "lng": -79.381553 },
+    "The Chang School of Continuing Education (Heaslip House)": { "lat": 43.657285, "lng": -79.379614 },
+    "Creative Innovation Studio": { "lat": 43.657456, "lng": -79.377894 },
+    "Civil Engineering Storage": { "lat": 43.657104, "lng": -79.377724 },
+    "101 Gerrard Street East": { "lat": 43.659921, "lng": -79.376732 },
+    "English Language Institute and International College": { "lat": 43.659916, "lng": -79.382042 },
+    "Centre for Urban Innovation": { "lat": 43.65993, "lng": -79.37980 },
+    "147 Dalhousie Street": { "lat": 43.656863, "lng": -79.37883 },
+    "Daphne Cockwell Health Sciences Complex": { "lat": 43.657104, "lng": -79.377724 },
+    "Yonge-Dundas Square": { "lat": 43.656738, "lng": -79.380239 },
+    "George Vari Engineering and Computing Centre": { "lat": 43.65802, "lng": -79.37742 },
+    "Eric Palin Hall": { "lat": 43.659664, "lng": -79.37754 },
+    "School of Graphic Communications Management": { "lat": 43.657572, "lng": -79.378447 },
+    "International Living / Learning Centre": { "lat": 43.658779, "lng": -79.375641 },
+    "School of Image Arts": { "lat": 43.657445, "lng": -79.379158 },
+    "The Image Centre": { "lat": 43.657716, "lng": -79.379261 },
+    "Jorgenson Hall": { "lat": 43.659094, "lng": -79.380984 },
+    "Kerr Hall East": { "lat": 43.65890, "lng": -79.37841 },
+    "Kerr Hall North": { "lat": 43.659411, "lng": -79.379594 },
+    "Kerr Hall South": { "lat": 43.658195, "lng": -79.37912 },
+    "Kerr Hall West": { "lat": 43.658742, "lng": -79.380161 },
+    "Library Building": { "lat": 43.659094, "lng": -79.380984 },
+    "Mattamy Athletic Centre": { "lat": 43.662257, "lng": -79.380306 },
+    "Merchandise Building": { "lat": 43.657445, "lng": -79.379158 },
+    "Civil Engineering Building (Monetary Times)": { "lat": 43.657104, "lng": -79.377724 },
+    "MaRS Building": { "lat": 43.659374, "lng": -79.389524 },
+    "Oakham House": { "lat": 43.65795, "lng": -79.37814 },
+    "O’Keefe House": { "lat": 43.657456, "lng": -79.377894 },
+    "Pitman Hall": { "lat": 43.65936, "lng": -79.37699 },
+    "Parking Garage": { "lat": 43.659094, "lng": -79.380984 },
+    "Podium": { "lat": 43.659094, "lng": -79.380984 },
+    "112 Bond Street": { "lat": 43.656863, "lng": -79.37883 },
+    "Recreation and Athletics Centre": { "lat": 43.65843, "lng": -79.379171 },
+    "Rogers Communications Centre": { "lat": 43.658705, "lng": -79.377036 },
+    "South Bond Building": { "lat": 43.65698, "lng": -79.37820 },
+    "Student Campus Centre": { "lat": 43.65774, "lng": -79.37821 },
+    "Sally Horsfall Eaton Centre for Studies in Community Health": { "lat": 43.65980, "lng": -79.37722 },
+    "School of Interior Design": { "lat": 43.657456, "lng": -79.377894 },
+    "Sheldon & Tracy Levy Student Learning Centre": { "lat": 43.656738, "lng": -79.380239 },
+    "St. Michael’s Hospital": { "lat": 43.65635, "lng": -79.38265 },
+    "Toronto Eaton Centre": { "lat": 43.65635, "lng": -79.38265 },
+    "Ted Rogers School of Management": { "lat": 43.655407, "lng": -79.382787 },
+    "Victoria Building": { "lat": 43.659094, "lng": -79.380984 },
+    "Yonge-Dundas Intersection": { "lat": 43.656738, "lng": -79.380239 },
+    "415 Yonge Street": { "lat": 43.659916, "lng": -79.382042 }
+  },
+  "UTM": {
+  "Communications, Culture & Technology Building": {
+    "lat": 43.54999216250181,
+    "lng": -79.66319485179798,
+    "code": "CC"
+  },
+  "Deerfield Hall": {
+    "lat": 43.55050021554291,
+    "lng": -79.6663580936153,
+    "code": "DH"
+  },
+  "William G. Davis Building": {
+    "lat": 43.54809468868277,
+    "lng": -79.66194317023785,
+    "code": "DV"
+  },
+  "Hazel McCallion Academic Learning Centre & Library": {
+    "lat": 43.550857635057184,
+    "lng": -79.66285038922881,
+    "code": "HM"
+  },
+  "Terrence Donnelly Health Sciences Complex": {
+    "lat": 43.54962599729461,
+    "lng": -79.66205812531928,
+    "code": "HB"
+  },
+  "Instructional Centre": {
+    "lat": 43.55157330489769,
+    "lng": -79.66390674110744,
+    "code": "IB"
+  },
+  "Kaneff Centre/Innovation Complex": {
+    "lat": 43.54838820747082,
+    "lng": -79.66337721410534,
+    "code": "KN"
+  },
+  "Maanjiwe nendamowinan": {
+    "lat": 43.55105422980631,
+    "lng": -79.66584848935915,
+    "code": "MN"
+  },
+  "New Science Building": {
+    "lat": 43.5490767457506,
+    "lng": -79.66101325605966,
+    "code": "NS"
+  },
+  "Academic Annex": {
+    "lat": 43.548258556408456,
+    "lng": -79.6644129731873,
+    "code": "AX"
+  },
+  "Alumni House & Parking Office": {
+    "lat": 43.54473635850951,
+    "lng": -79.66037253944393,
+    "code": "WC"
+  },
+    "Central Utilities Plant": {
+    "lat": 43.551789668525686,
+    "lng": -79.66213849991867,
+    "code": "C3"
+  },
+  "Erindale Studio Theatre": {
+    "lat": 43.54995938718304,
+    "lng": -79.66628529300696,
+    "code": "DW"
+  },
+  "Forensic Anthropology Field School": {
+    "lat": 43.552961567797894,
+    "lng": -79.66552814746562,
+    "code": "C6"
+  },
+  "Grounds Building": {
+    "lat": 43.55355239148949,
+    "lng": -79.66553962955115,
+    "code": "GF"
+  },
+  "Lislehurst": {
+    "lat": 43.554716773366266,
+    "lng": -79.66875439774789,
+    "code": "C8"
+  },
+  "Paleomagnetism Lab": {
+    "lat": 43.55382699771263,
+    "lng": -79.6658151996065,
+    "code": "C9"
+  },
+  "Recreation, Athletics & Wellness Centre": {
+    "lat": 43.54828609836315,
+    "lng": -79.66088681835849,
+    "code": "RA"
+  },
+  "Research Greenhouse": {
+    "lat": 43.55084099147109,
+    "lng": -79.66202367906203,
+    "code": "BG"
+  },
+  "Student Centre": {
+    "lat": 43.54899726843507,
+    "lng": -79.6639943696913,
+    "code": "XR"
+  },
+  "Erindale Hall": {
+    "lat": 43.54960322927147,
+    "lng": -79.66568468799122,
+    "code": "R1"
+  },
+  "Leacock Lane Residence": {
+    "lat": 43.546160079750365,
+    "lng": -79.6631305504943,
+    "code": "R2"
+  },
+  "MaGrath Valley Residence": {
+    "lat": 43.54576450487002,
+    "lng": -79.66166245440019,
+    "code": "R3"
+  },
+    "McLuhan Court Residence": {
+    "lat": 43.547755796835105,
+    "lng": -79.66658804361023,
+    "code": "R4"
+  },
+  "Oscar Peterson Hall": {
+    "lat": 43.548745803444945,
+    "lng": -79.66599409057525,
+    "code": "R5"
+  },
+  "Putnam Place Residence": {
+    "lat": 43.54670626954734,
+    "lng": -79.66508093122631,
+    "code": "R6"
+  },
+  "Roy Ivor Hall": {
+    "lat": 43.548505447431495,
+    "lng": -79.66697220808788,
+    "code": "R7"
+  },
+  "Schreiberwood Residence": {
+    "lat": 43.54913573322716,
+    "lng": -79.6678672779055,
+    "code": "R8"
+  }
+}
+}
