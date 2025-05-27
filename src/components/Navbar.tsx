@@ -45,6 +45,9 @@ export default function Navbar() {
                         {!isLoggedIn ? (
                             <>
                             <li className="px-4 py-2 hover:bg-gray-100">
+                                <Link href="/explore">Explore!</Link>
+                            </li>
+                            <li className="px-4 py-2 hover:bg-gray-100">
                                 <Link href="/login">Login</Link>
                             </li>
                             <li className="px-4 py-2 hover:bg-gray-100">
@@ -52,9 +55,14 @@ export default function Navbar() {
                             </li>
                             </>
                         ) : (
+                            <>
+                            <li className="px-4 py-2 hover:bg-gray-100">
+                                <Link href="/explore">Explore!</Link>
+                            </li>
                             <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => setIsLoggedIn(false)}>
                             Logout
                             </li>
+                            </>
                         )}
                         </ul>
                     </div>

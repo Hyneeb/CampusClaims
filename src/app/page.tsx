@@ -51,7 +51,7 @@ export default function Home() {
   return (
     <>
       {/* Main Section */}
-      <div className="flex flex-col justify-center w-full bg-white p-4 gap-8">
+      <div className="flex flex-col justify-center w-full p-4 gap-8">
         {/* Selector */}
         <SchoolSelector onChange={setCampusIndex} />
 
@@ -65,22 +65,6 @@ export default function Home() {
           <div className="rounded-4xl w-20 h-20 bg-blue-600 flex justify-center items-center">
             <PlusIcon className="h-10 w-10 text-white" />
           </div>
-        </Link>
-      </div>
-
-      {/* Demo Section */}
-      <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-white p-8">
-        <Link
-          href="/posting/c3898659-48d5-4fcb-bc63-783aff8b6e18"
-          className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition"
-        >
-          Go to Sample Post
-        </Link>
-        <Link
-          href="/explore"
-          className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition"
-        >
-          Explore!
         </Link>
       </div>
     </>
